@@ -17,6 +17,4 @@ public interface SupplyRepository extends JpaRepository<Supply, Long> {
     boolean existsBySupplyNameAndStudioId(String supplyName, Long studioId);
 
     boolean existsBySupplyNameAndStudioIdAndIdNot(String supplyName, Long studioId, Long id);
-
-    List<Supply> findByStudioIdAndStockQuantityLessThanEqualReorderPoint(Long studioId);
 }

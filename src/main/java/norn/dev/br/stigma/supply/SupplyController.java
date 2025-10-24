@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import norn.dev.br.stigma.supply.dto.SupplyRequestDTO;
 import norn.dev.br.stigma.supply.dto.SupplyResponseDTO;
 import norn.dev.br.stigma.supply.service.SupplyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ import java.util.List;
 @RequestMapping("/api/supplies")
 @RequiredArgsConstructor
 public class SupplyController {
-
+    @Autowired
     private final SupplyService supplyService;
 
     @GetMapping
@@ -28,12 +29,6 @@ public class SupplyController {
     public ResponseEntity<SupplyResponseDTO> findById(@PathVariable Long id) {
         SupplyResponseDTO supply = supplyService.findById(id);
         return ResponseEntity.ok(supply);
-    }
-
-    @GetMapping("/low-stock")
-    public ResponseEntity<List<SupplyResponseDTO>> findLowStock() {
-        List<SupplyResponseDTO> supplies = supplyService.findLowStock();
-        return ResponseEntity.ok(supplies);
     }
 
     @PostMapping

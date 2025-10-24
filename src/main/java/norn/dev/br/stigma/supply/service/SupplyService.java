@@ -5,6 +5,7 @@ import norn.dev.br.stigma.supply.dto.SupplyRequestDTO;
 import norn.dev.br.stigma.supply.dto.SupplyResponseDTO;
 import norn.dev.br.stigma.supply.model.Supply;
 import norn.dev.br.stigma.supply.repository.SupplyRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +17,8 @@ import java.util.stream.Collectors;
 public class SupplyService {
 
     private static final Long STUDIO_ID = 1L;
-
-    private final SupplyRepository supplyRepository;
+    @Autowired
+    private SupplyRepository supplyRepository;
 
     @Transactional(readOnly = true)
     public List<SupplyResponseDTO> findAll() {
@@ -77,13 +78,5 @@ public class SupplyService {
         Supply supply = supplyRepository.findByIdAndStudioId(id, STUDIO_ID)
                 .orElseThrow(() -> new RuntimeException("Material não encontrado com id: " + id));
         supplyRepository.delete(supply);
-    }
-
-    @Transactional(readOnly = true)
-    public List<SupplyResponseDTO> findLowStock() {
-        return supplyRepository.findByStudioIdAndStockQuantityLessThanEqualReorderPoint(STUDIO_ID)
-                .stream()
-                .map(SupplyResponseDTO::fromEntity)
-                .collect(Collectors.toList());
     }
 }
