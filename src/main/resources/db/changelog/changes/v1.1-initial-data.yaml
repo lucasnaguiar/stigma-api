@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 7
+      author: liquibase
+      comment: Insert initial studio data
+      changes:
+        - insert:
+            tableName: studios
+            columns:
+              - column:
+                  name: studio_name
+                  value: Underground Tattoo
+              - column:
+                  name: subdomain
+                  value: default

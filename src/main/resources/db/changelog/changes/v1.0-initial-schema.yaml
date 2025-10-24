@@ -1,0 +1,338 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: liquibase
+      comment: Create studios table
+      changes:
+        - createTable:
+            tableName: studios
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: studios_pkey
+              - column:
+                  name: studio_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: subdomain
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: studios_subdomain_key
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - addDefaultValue:
+            tableName: studios
+            columnName: created_at
+            defaultValueComputed: CURRENT_TIMESTAMP
+        - setTableRemarks:
+            tableName: studios
+            remarks: Tenant table. Each row represents a studio client of the system.
+
+  - changeSet:
+      id: 2
+      author: liquibase
+      comment: Create artists table
+      changes:
+        - createTable:
+            tableName: artists
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: artists_pkey
+              - column:
+                  name: studio_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone_number
+                  type: varchar(20)
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: artists
+            baseColumnNames: studio_id
+            constraintName: artists_studio_id_fkey
+            referencedTableName: studios
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addUniqueConstraint:
+            tableName: artists
+            columnNames: studio_id, email
+            constraintName: artists_studio_id_email_key
+
+  - changeSet:
+      id: 3
+      author: liquibase
+      comment: Create customers table
+      changes:
+        - createTable:
+            tableName: customers
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: customers_pkey
+              - column:
+                  name: studio_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone_number
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: customers
+            baseColumnNames: studio_id
+            constraintName: customers_studio_id_fkey
+            referencedTableName: studios
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addUniqueConstraint:
+            tableName: customers
+            columnNames: studio_id, phone_number
+            constraintName: customers_studio_id_phone_number_key
+
+  - changeSet:
+      id: 4
+      author: liquibase
+      comment: Create supplies table
+      changes:
+        - createTable:
+            tableName: supplies
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: supplies_pkey
+              - column:
+                  name: studio_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: supply_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: stock_quantity
+                  type: int
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unit_of_measure
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reorder_point
+                  type: int
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+        - sql:
+            sql: ALTER TABLE supplies ADD CONSTRAINT supplies_stock_quantity_check CHECK (stock_quantity >= 0)
+        - addForeignKeyConstraint:
+            baseTableName: supplies
+            baseColumnNames: studio_id
+            constraintName: supplies_studio_id_fkey
+            referencedTableName: studios
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addUniqueConstraint:
+            tableName: supplies
+            columnNames: studio_id, supply_name
+            constraintName: supplies_studio_id_supply_name_key
+        - setColumnRemarks:
+            tableName: supplies
+            columnName: reorder_point
+            remarks: The minimum quantity to trigger a reorder alert.
+
+  - changeSet:
+      id: 5
+      author: liquibase
+      comment: Create appointments table
+      changes:
+        - createTable:
+            tableName: appointments
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: appointments_pkey
+              - column:
+                  name: studio_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: artist_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: appointment_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: period
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(15)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tattoo_description
+                  type: text
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - sql:
+            sql: ALTER TABLE appointments ADD CONSTRAINT appointments_period_check CHECK (period IN ('MORNING', 'AFTERNOON', 'NIGHT'))
+        - sql:
+            sql: ALTER TABLE appointments ADD CONSTRAINT appointments_status_check CHECK (status IN ('SCHEDULED', 'COMPLETED', 'CANCELED'))
+        - addForeignKeyConstraint:
+            baseTableName: appointments
+            baseColumnNames: studio_id
+            constraintName: appointments_studio_id_fkey
+            referencedTableName: studios
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: appointments
+            baseColumnNames: artist_id
+            constraintName: appointments_artist_id_fkey
+            referencedTableName: artists
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: appointments
+            baseColumnNames: customer_id
+            constraintName: appointments_customer_id_fkey
+            referencedTableName: customers
+            referencedColumnNames: id
+        - setColumnRemarks:
+            tableName: appointments
+            columnName: period
+            remarks: 'The period of the day for the appointment: MORNING, AFTERNOON, NIGHT.'
+
+  - changeSet:
+      id: 6
+      author: liquibase
+      comment: Create appointment_supplies table
+      changes:
+        - createTable:
+            tableName: appointment_supplies
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: appointment_supplies_pkey
+              - column:
+                  name: appointment_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: supply_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity_used
+                  type: int
+                  constraints:
+                    nullable: false
+        - sql:
+            sql: ALTER TABLE appointment_supplies ADD CONSTRAINT appointment_supplies_quantity_used_check CHECK (quantity_used > 0)
+        - addForeignKeyConstraint:
+            baseTableName: appointment_supplies
+            baseColumnNames: appointment_id
+            constraintName: appointment_supplies_appointment_id_fkey
+            referencedTableName: appointments
+            referencedColumnNames: id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: appointment_supplies
+            baseColumnNames: supply_id
+            constraintName: appointment_supplies_supply_id_fkey
+            referencedTableName: supplies
+            referencedColumnNames: id
+        - addUniqueConstraint:
+            tableName: appointment_supplies
+            columnNames: appointment_id, supply_id
+            constraintName: appointment_supplies_appointment_id_supply_id_key

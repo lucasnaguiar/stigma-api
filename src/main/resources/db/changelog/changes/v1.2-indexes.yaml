@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 8
+      author: liquibase
+      comment: Create index for calendar queries
+      changes:
+        - createIndex:
+            indexName: idx_appointments_calendar
+            tableName: appointments
+            columns:
+              - column:
+                  name: studio_id
+              - column:
+                  name: appointment_date
+              - column:
+                  name: artist_id
