@@ -13,4 +13,4 @@ databaseChangeLog:
               - column:
                   name: appointment_date
               - column:
-                  name: artist_id
+                  name: user_id

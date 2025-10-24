@@ -43,10 +43,10 @@ databaseChangeLog:
   - changeSet:
       id: 2
       author: liquibase
-      comment: Create artists table
+      comment: Create users table
       changes:
         - createTable:
-            tableName: artists
+            tableName: users
             columns:
               - column:
                   name: id
@@ -54,7 +54,7 @@ databaseChangeLog:
                   autoIncrement: true
                   constraints:
                     primaryKey: true
-                    primaryKeyName: artists_pkey
+                    primaryKeyName: users_pkey
               - column:
                   name: studio_id
                   type: int
@@ -80,16 +80,16 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - addForeignKeyConstraint:
-            baseTableName: artists
+            baseTableName: users
             baseColumnNames: studio_id
-            constraintName: artists_studio_id_fkey
+            constraintName: users_studio_id_fkey
             referencedTableName: studios
             referencedColumnNames: id
             onDelete: CASCADE
         - addUniqueConstraint:
-            tableName: artists
+            tableName: users
             columnNames: studio_id, email
-            constraintName: artists_studio_id_email_key
+            constraintName: users_studio_id_email_key
 
   - changeSet:
       id: 3
@@ -226,7 +226,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: artist_id
+                  name: user_id
                   type: int
                   constraints:
                     nullable: false
@@ -272,9 +272,9 @@ databaseChangeLog:
             onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: appointments
-            baseColumnNames: artist_id
-            constraintName: appointments_artist_id_fkey
-            referencedTableName: artists
+            baseColumnNames: user_id
+            constraintName: appointments_user_id_fkey
+            referencedTableName: users
             referencedColumnNames: id
         - addForeignKeyConstraint:
             baseTableName: appointments
