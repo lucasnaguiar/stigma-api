@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: stigma-api
+    token-secret: ${JWT_SECRET:c686bdc9005ffaf4d47bdd390d9043e7}
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/stigma_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    default-schema: public
