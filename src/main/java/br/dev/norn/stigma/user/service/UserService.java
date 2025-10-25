@@ -4,9 +4,6 @@ import br.dev.norn.stigma.user.dto.UserDetailDataObject;
 import br.dev.norn.stigma.user.dto.UserRegisterDataObject;
 import br.dev.norn.stigma.user.model.User;
 import br.dev.norn.stigma.user.repository.UserRepository;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,18 +14,12 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
 
     private static final Long STUDIO_ID = 1L;
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmailAndStudioId(email, STUDIO_ID)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
-    }
 
     @Transactional(readOnly = true)
     public List<UserDetailDataObject> getUsers() {
